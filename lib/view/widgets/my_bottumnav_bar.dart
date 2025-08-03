@@ -44,16 +44,6 @@ class MyBottumnavBar extends StatelessWidget {
             text: 'Cart',
             iconSize: 22,
             textSize: 14,
-            leading: Row(
-              children: [
-                const Icon(Icons.shopping_bag_rounded, size: 18),
-                const SizedBox(width: 4),
-                Text(
-                  cartItemCount.toString(), // Use actual count
-                  style: const TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ],
-            ),
           ),
         ],
       ),

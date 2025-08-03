@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:shoppr/data/model/product_items.dart';
 
 class ProductTile extends StatelessWidget {
@@ -16,6 +17,135 @@ class ProductTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 158,
+      height: 184,
+      decoration: BoxDecoration(
+        color: Colors.grey[200],
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Stack(
+        children: [
+          Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 0, top: 8, bottom: 8),
+                child: ClipRRect(
+                  // borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                  child: Image.network(
+                    product.images != null && product.images!.isNotEmpty
+                        ? product
+                              .images!
+                              .first // Get the first image from the list
+                        : '',
+                    width: 115,
+                    height: 116,
+                    fit: BoxFit.cover,
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child; // If image is loaded, return it
+                      }
+                      return Shimmer.fromColors(
+                        baseColor: Colors.grey[300]!,
+                        highlightColor: Colors.grey[100]!,
+                        child: Container(
+                          width: 115,
+                          height: 116,
+                          color: Colors.white,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 8),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            product.title != null && product.title!.length > 20
+                                ? '${product.title!.substring(0, 20)}...' // Trim and add '...'
+                                : product.title ??
+                                      '', // Use full title if it's shorter
+                            style: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            product.category ?? '',
+                            style: TextStyle(
+                              color: Colors.grey[900],
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+
+                          // Price
+                          Row(
+                            children: [
+                              const Text(
+                                "\$",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                "${product.price ?? 0}",
+                                style: TextStyle(
+                                  color: Colors.grey[900],
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 19.78),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Container(
+              width: 36,
+              height: 36,
+              decoration: const BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  bottomRight: Radius.circular(12),
+                ),
+              ),
+              child: Center(
+                child: IconButton(
+                  onPressed: onTap,
+                  icon: const Icon(Icons.add, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/*
+
+ Container(
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(30),
@@ -40,100 +170,5 @@ class ProductTile extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-/* 
-
-Card(
-        elevation: 3,
-        margin: const EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Product Image
-              AspectRatio(
-                aspectRatio: 1,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.network(
-                    product.thumbnail ?? 'https://via.placeholder.com/150',
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-
-              const SizedBox(height: 8),
-
-              // Title
-              Text(
-                product.title ?? 'No Title',
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-              const SizedBox(height: 4),
-
-              // Price & Discount
-              Row(
-                children: [
-                  Text(
-                    '₹${product.price?.toStringAsFixed(2) ?? 'N/A'}',
-                    style: const TextStyle(fontSize: 14, color: Colors.green),
-                  ),
-                  if (product.discountPercentage != null &&
-                      product.discountPercentage! > 0)
-                    Padding(
-                      padding: const EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        '${product.discountPercentage!.toStringAsFixed(0)}% OFF',
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.red,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                ],
-              ),
-
-              const SizedBox(height: 4),
-
-              // Rating
-              Row(
-                children: [
-                  const Icon(Icons.star, color: Colors.amber, size: 16),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${product.rating?.toStringAsFixed(1) ?? 'N/A'}',
-                    style: const TextStyle(fontSize: 13),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 4),
-
-              // Availability
-              Text(
-                product.availabilityStatus ?? 'Available',
-                style: TextStyle(
-                  fontSize: 12,
-                  color:
-                      (product.availabilityStatus?.toLowerCase() == 'in stock')
-                      ? Colors.green
-                      : Colors.red,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
 
 */

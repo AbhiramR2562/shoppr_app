@@ -28,7 +28,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Welcome to Shoppr"), centerTitle: true),
       bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
           int itemCount = 0;

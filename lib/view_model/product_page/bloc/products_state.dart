@@ -10,8 +10,9 @@ class ProductLoading extends ProductsState {}
 class ProductLoaded extends ProductsState {
   final List<ProductItem> products;
   final bool hasMore;
+  final bool isLoadingMore;
 
-  ProductLoaded(this.products, this.hasMore);
+  ProductLoaded(this.products, this.hasMore, {this.isLoadingMore = false});
 }
 
 class ProductError extends ProductsState {

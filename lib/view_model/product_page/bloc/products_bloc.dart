@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:meta/meta.dart';
 import 'package:shoppr/data/model/product_items.dart';
-import 'package:shoppr/data/model/product_model.dart';
 import 'package:shoppr/data/repositories/product_repository.dart';
 
 part 'products_event.dart';
@@ -35,6 +34,11 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       _allProducts.clear();
       _skip = 0;
       _hasMore = true;
+    } else {
+      // Emit current data with isLoadingMore = true
+      emit(
+        ProductLoaded(List.from(_allProducts), _hasMore, isLoadingMore: true),
+      );
     }
 
     try {

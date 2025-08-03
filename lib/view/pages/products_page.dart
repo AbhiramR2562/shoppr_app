@@ -48,53 +48,68 @@ class _ProductsPageState extends State<ProductsPage> {
       value: _productsBloc,
       child: Scaffold(
         backgroundColor: Colors.grey[300],
-        appBar: AppBar(title: Text("Home Page")),
+        appBar: AppBar(title: Text("Home Page"), centerTitle: true),
         body: BlocBuilder<ProductsBloc, ProductsState>(
           builder: (context, state) {
             if (state is ProductLoading) {
               return Center(child: CircularProgressIndicator());
             } else if (state is ProductLoaded) {
-              isLoadingMore = false; // ✅ Reset loading flag
+              isLoadingMore = false; //  Reset loading flag
               // Access products from first ProductModel
               final productList = state.products;
 
-              return GridView.builder(
-                controller: _scrollController,
-                itemCount: isLoadingMore
-                    ? productList.length + 1
-                    : productList.length,
-                padding: const EdgeInsets.all(12),
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 12,
-                  childAspectRatio: 0.75,
-                ),
-                itemBuilder: (context, index) {
-                  if (index >= productList.length) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    ); // Loading at end
-                  }
+              return Column(
+                children: [
+                  Expanded(
+                    child: GridView.builder(
+                      controller: _scrollController,
+                      itemCount: isLoadingMore
+                          ? productList.length + 1
+                          : productList.length,
+                      padding: const EdgeInsets.all(12),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 12,
+                        crossAxisSpacing: 12,
+                        childAspectRatio: 0.75,
+                      ),
+                      itemBuilder: (context, index) {
+                        if (index >= productList.length) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
 
-                  final product = productList[index];
-                  return ProductTile(
-                    product: product,
-                    onPressed: () {},
-                    // product adding to cart
-                    onTap: () {
-                      context.read<CartBloc>().add(
-                        AddToCartEvent(product: product),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('${product.title} added to cart'),
-                          duration: Duration(seconds: 1),
-                        ),
-                      );
-                    },
-                  );
-                },
+                        final product = productList[index];
+                        return ProductTile(
+                          product: product,
+                          onPressed: () {},
+                          // product adding to cart
+                          onTap: () {
+                            context.read<CartBloc>().add(
+                              AddToCartEvent(product: product),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: Colors.white,
+
+                                content: Text(
+                                  '${product.title} added to cart',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                  //  Bottom loader for pagination
+                  if (state.isLoadingMore)
+                    CircularProgressIndicator(strokeWidth: 4),
+                ],
               );
             } else if (state is ProductError) {
               return Center(child: Text(state.message));
