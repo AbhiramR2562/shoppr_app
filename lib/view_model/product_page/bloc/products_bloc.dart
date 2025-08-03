@@ -74,23 +74,13 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
   FutureOr<void> searchProductsEvent(
     SearchProductsEvent event,
     Emitter<ProductsState> emit,
-  ) {
-    final query = event.query.trim().toLowerCase();
-
-    // If query is empty, return the full list
-    if (query.isEmpty) {
-      emit(ProductLoaded(List.from(_allProducts), _hasMore));
-      return Future.value();
+  ) async {
+    try {
+      final result = await repository.searchProducts(event.query);
+      emit(ProductLoaded(result.products ?? [], result.products.length < 10));
+    } catch (e) {
+      emit(ProductError(e.toString()));
     }
-
-    final filtered = _allProducts.where((product) {
-      final title = product.title?.toLowerCase() ?? '';
-      final Category = product.category?.toLowerCase() ?? '';
-      return title.contains(query) || Category.contains(query);
-    }).toList();
-
-    emit(ProductLoaded(filtered, false));
-    return Future.value();
   }
 
   FutureOr<void> fetchCategoriesEvent(

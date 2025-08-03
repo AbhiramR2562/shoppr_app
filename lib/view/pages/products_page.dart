@@ -94,9 +94,11 @@ class _ProductsPageState extends State<ProductsPage> {
                                 ),
                                 onChanged: (query) {
                                   // handle search here
-                                  context.read<ProductsBloc>().add(
-                                    SearchProductsEvent(query),
-                                  );
+                                  if (query.trim().isNotEmpty) {
+                                    context.read<ProductsBloc>().add(
+                                      SearchProductsEvent(query.trim()),
+                                    );
+                                  }
                                 },
                               ),
                             ),
