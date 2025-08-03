@@ -14,7 +14,7 @@ class MyBottumnavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 70, // ← control the total height here
-      color: Colors.green,
+      color: Colors.black,
       padding: const EdgeInsets.symmetric(
         vertical: 10,
         horizontal: 15,
@@ -25,8 +25,8 @@ class MyBottumnavBar extends StatelessWidget {
           horizontal: 20,
           vertical: 12,
         ), // padding inside each tab
-        color: Colors.blue[400],
-        activeColor: Colors.blue[700],
+        color: Colors.grey[400],
+        activeColor: Colors.black,
         tabActiveBorder: Border.all(color: Colors.white),
         tabBackgroundColor: Colors.grey.shade100,
         tabBorderRadius: 18,

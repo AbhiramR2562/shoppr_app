@@ -20,3 +20,9 @@ class ProductError extends ProductsState {
 
   ProductError(this.message);
 }
+
+class CategoryLoaded extends ProductsState {
+  final List<String> categories;
+
+  CategoryLoaded(this.categories);
+}

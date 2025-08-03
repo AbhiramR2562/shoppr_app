@@ -27,33 +27,36 @@ class ProductTile extends StatelessWidget {
         children: [
           Column(
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 0, top: 8, bottom: 8),
-                child: ClipRRect(
-                  // borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-                  child: Image.network(
-                    product.images != null && product.images!.isNotEmpty
-                        ? product
-                              .images!
-                              .first // Get the first image from the list
-                        : '',
-                    width: 115,
-                    height: 116,
-                    fit: BoxFit.cover,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child; // If image is loaded, return it
-                      }
-                      return Shimmer.fromColors(
-                        baseColor: Colors.grey[300]!,
-                        highlightColor: Colors.grey[100]!,
-                        child: Container(
-                          width: 115,
-                          height: 116,
-                          color: Colors.white,
-                        ),
-                      );
-                    },
+              GestureDetector(
+                onTap: onPressed,
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 0, top: 8, bottom: 8),
+                  child: ClipRRect(
+                    // borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                    child: Image.network(
+                      product.images != null && product.images!.isNotEmpty
+                          ? product
+                                .images!
+                                .first // Get the first image from the list
+                          : '',
+                      width: 115,
+                      height: 116,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) {
+                          return child; // If image is loaded, return it
+                        }
+                        return Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(
+                            width: 115,
+                            height: 116,
+                            color: Colors.white,
+                          ),
+                        );
+                      },
+                    ),
                   ),
                 ),
               ),

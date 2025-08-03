@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:meta/meta.dart';
 import 'package:shoppr/data/model/product_items.dart';
 import 'package:shoppr/data/repositories/product_repository.dart';
@@ -12,6 +13,9 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
   final ProductRepository repository;
 
   List<ProductItem> _allProducts = [];
+
+  List<String> _categories = [];
+
   int _skip = 0;
   final int _limit = 10;
   bool _hasMore = true;
@@ -19,6 +23,9 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
 
   ProductsBloc({required this.repository}) : super(ProductsInitial()) {
     on<FetchProductsEvent>(fetchProducts);
+    on<SearchProductsEvent>(searchProductsEvent);
+    on<FetchCategoriesEvent>(fetchCategoriesEvent);
+    on<LoadProductByCategoryevent>(loadProductByCategoryevent);
   }
 
   FutureOr<void> fetchProducts(
@@ -61,6 +68,57 @@ class ProductsBloc extends Bloc<ProductsEvent, ProductsState> {
       emit(ProductError('Failed to load products: $e'));
     } finally {
       _isFetching = false;
+    }
+  }
+
+  FutureOr<void> searchProductsEvent(
+    SearchProductsEvent event,
+    Emitter<ProductsState> emit,
+  ) {
+    final query = event.query.trim().toLowerCase();
+
+    // If query is empty, return the full list
+    if (query.isEmpty) {
+      emit(ProductLoaded(List.from(_allProducts), _hasMore));
+      return Future.value();
+    }
+
+    final filtered = _allProducts.where((product) {
+      final title = product.title?.toLowerCase() ?? '';
+      final Category = product.category?.toLowerCase() ?? '';
+      return title.contains(query) || Category.contains(query);
+    }).toList();
+
+    emit(ProductLoaded(filtered, false));
+    return Future.value();
+  }
+
+  FutureOr<void> fetchCategoriesEvent(
+    FetchCategoriesEvent event,
+    Emitter<ProductsState> emit,
+  ) async {
+    try {
+      _categories = await repository.getCategories();
+      emit(CategoryLoaded(_categories));
+    } catch (e) {
+      emit(ProductError('Failed to fetch categories: $e'));
+    }
+  }
+
+  FutureOr<void> loadProductByCategoryevent(
+    LoadProductByCategoryevent event,
+    Emitter<ProductsState> emit,
+  ) async {
+    try {
+      emit(ProductLoading());
+      final categoryProducts = await repository.getProductByCategory(
+        event.category,
+      );
+      _allProducts = categoryProducts.products ?? [];
+      _hasMore = false;
+      emit(ProductLoaded(List.from(_allProducts), _hasMore));
+    } catch (e) {
+      emit(ProductError('Failed to load category products: $e'));
     }
   }
 }

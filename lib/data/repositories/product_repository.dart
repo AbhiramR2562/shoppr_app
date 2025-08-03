@@ -43,4 +43,16 @@ class ProductRepository {
     );
     return ProductModel.fromJson(data);
   }
+
+  // get all category's
+  Future<List<String>> getCategories() async {
+    final data = await _networkService.get('/products/category-list');
+    return List<String>.from(data);
+  }
+
+  // Get products by a category
+  Future<ProductModel> getProductByCategory(String category) async {
+    final data = await _networkService.get('/products/category/$category');
+    return ProductModel.fromJson(data);
+  }
 }
