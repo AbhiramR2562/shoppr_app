@@ -30,19 +30,12 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       bottomNavigationBar: BlocBuilder<CartBloc, CartState>(
         builder: (context, state) {
-          int itemCount = 0;
-
-          if (state is CartUpdated) {
-            itemCount = state.cartItems.length;
-          }
-
           return MyBottumnavBar(
             onTabChange: (index) => navigateBottomBar(index),
-            cartItemCount: itemCount,
           );
         },
       ),
-      body: _pages[_selectedIndex],
+      body: IndexedStack(index: _selectedIndex, children: _pages),
     );
   }
 }

@@ -4,7 +4,11 @@ import 'package:shoppr/data/model/product_items.dart';
 
 class ProductTile extends StatelessWidget {
   final ProductItem product;
+
+  // cart Button
   final VoidCallback? onTap;
+
+  // image is tapped
   void Function()? onPressed;
 
   ProductTile({
@@ -31,8 +35,8 @@ class ProductTile extends StatelessWidget {
                 onTap: onPressed,
                 child: Padding(
                   padding: const EdgeInsets.only(left: 0, top: 8, bottom: 8),
+                  // Product Image with shimmer loading
                   child: ClipRRect(
-                    // borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
                     child: Image.network(
                       product.images != null && product.images!.isNotEmpty
                           ? product
@@ -71,6 +75,7 @@ class ProductTile extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Title
                           Text(
                             product.title != null && product.title!.length > 20
                                 ? '${product.title!.substring(0, 20)}...' // Trim and add '...'
@@ -81,6 +86,8 @@ class ProductTile extends StatelessWidget {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
+
+                          // Category
                           Text(
                             product.category ?? '',
                             style: TextStyle(
@@ -88,6 +95,37 @@ class ProductTile extends StatelessWidget {
                               fontSize: 12,
                               fontWeight: FontWeight.w300,
                             ),
+                          ),
+
+                          // Rating
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.star,
+                                    color: Colors.amber,
+                                    size: 16,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text('${product.rating ?? "N/A"}'),
+                                ],
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.1,
+                              ),
+
+                              // Discount Percentage
+                              Text(
+                                "${product.discountPercentage} %",
+                                style: TextStyle(
+                                  color: Colors.green[900],
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
                           ),
 
                           // Price
@@ -120,6 +158,8 @@ class ProductTile extends StatelessWidget {
               ),
             ],
           ),
+
+          // Cart Button
           Align(
             alignment: Alignment.bottomRight,
             child: Container(
@@ -135,7 +175,10 @@ class ProductTile extends StatelessWidget {
               child: Center(
                 child: IconButton(
                   onPressed: onTap,
-                  icon: const Icon(Icons.add, color: Colors.white),
+                  icon: const Icon(
+                    Icons.shopping_cart_outlined,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),
@@ -145,33 +188,3 @@ class ProductTile extends StatelessWidget {
     );
   }
 }
-
-/*
-
- Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(30),
-      ),
-      child: Column(
-        children: [
-          // Product Image
-          GestureDetector(
-            onTap: onTap,
-            child: AspectRatio(
-              aspectRatio: 1,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: Image.network(
-                  product.thumbnail ?? '',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ),
-          ),
-          IconButton(onPressed: onTap, icon: Icon(Icons.card_travel)),
-        ],
-      ),
-    );
-
-*/

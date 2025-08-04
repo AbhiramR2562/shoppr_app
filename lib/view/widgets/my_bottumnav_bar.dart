@@ -3,22 +3,14 @@ import 'package:google_nav_bar/google_nav_bar.dart';
 
 class MyBottumnavBar extends StatelessWidget {
   void Function(int)? onTabChange;
-  final int cartItemCount;
-  MyBottumnavBar({
-    super.key,
-    required this.onTabChange,
-    required this.cartItemCount,
-  });
+  MyBottumnavBar({super.key, required this.onTabChange});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 70, // ← control the total height here
-      color: Colors.black,
-      padding: const EdgeInsets.symmetric(
-        vertical: 10,
-        horizontal: 15,
-      ), // inner padding
+      height: 70,
+      color: Colors.grey[200],
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: GNav(
         gap: 8, // space between icon and text
         padding: const EdgeInsets.symmetric(
@@ -31,14 +23,17 @@ class MyBottumnavBar extends StatelessWidget {
         tabBackgroundColor: Colors.grey.shade100,
         tabBorderRadius: 18,
         mainAxisAlignment: MainAxisAlignment.center,
-        onTabChange: onTabChange, // ← don’t forget to call your passed function
+        onTabChange: onTabChange,
         tabs: [
+          // SHOP
           const GButton(
             icon: Icons.home,
             text: 'Shop',
-            iconSize: 22, // ← adjust icon size
-            textSize: 14, // ← control text size if needed
+            iconSize: 22,
+            textSize: 14,
           ),
+
+          // CART
           GButton(
             icon: Icons.shopping_bag_rounded,
             text: 'Cart',

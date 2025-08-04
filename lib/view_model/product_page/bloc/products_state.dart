@@ -11,8 +11,14 @@ class ProductLoaded extends ProductsState {
   final List<ProductItem> products;
   final bool hasMore;
   final bool isLoadingMore;
+  final List<String> categories;
 
-  ProductLoaded(this.products, this.hasMore, {this.isLoadingMore = false});
+  ProductLoaded(
+    this.products,
+    this.hasMore, {
+    this.isLoadingMore = false,
+    this.categories = const [],
+  });
 }
 
 class ProductError extends ProductsState {

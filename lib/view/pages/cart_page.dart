@@ -9,13 +9,26 @@ class CartPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Cart page"), centerTitle: true),
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text("Cart page"),
+        centerTitle: true,
+      ),
       body: BlocBuilder<CartBloc, CartState>(
-        builder: (context, State) {
-          if (State is CartUpdated) {
-            final items = State.cartItems;
+        builder: (context, state) {
+          if (state is CartInitial) {
+            return Center(
+              child: Text(
+                "Cart is empty",
+                style: TextStyle(color: Colors.grey[400]),
+              ),
+            );
+          } else if (state is CartUpdated) {
+            // Get list of cart items
+            final items = state.cartItems;
 
             if (items.isEmpty) {
+              // If cart is empty, show a message
               return Center(
                 child: Text(
                   "Cart is empty",
@@ -32,6 +45,7 @@ class CartPage extends StatelessWidget {
 
             return Column(
               children: [
+                // List of items in the cart
                 Expanded(
                   child: ListView.builder(
                     itemCount: items.length,
@@ -40,6 +54,7 @@ class CartPage extends StatelessWidget {
                       final product = cartItem.product;
                       final quantity = cartItem.quantity;
                       return ListTile(
+                        // Product image
                         leading: Image.network(
                           product.thumbnail ?? '',
                           height: 50,
@@ -51,6 +66,7 @@ class CartPage extends StatelessWidget {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            // Button to decrease quantity
                             IconButton(
                               icon: const Icon(
                                 Icons.remove_circle,
@@ -63,6 +79,7 @@ class CartPage extends StatelessWidget {
                                 );
                               },
                             ),
+                            // Button to increase quantity
                             IconButton(
                               icon: const Icon(
                                 Icons.add_circle,
@@ -71,7 +88,7 @@ class CartPage extends StatelessWidget {
                               onPressed: () {
                                 //Add item in to the cart
                                 context.read<CartBloc>().add(
-                                  IncreaseCartItemEvent(product.id!),
+                                  AddToCartEvent(product: product, quantity: 1),
                                 );
                               },
                             ),
@@ -81,30 +98,62 @@ class CartPage extends StatelessWidget {
                     },
                   ),
                 ),
+                // Bottom section: Checkout button and total price
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
+                      // clear All
                       ElevatedButton(
                         onPressed: () {
-                          // Handle checkout logic here it will clear the cart item in the cart page
+                          // Clear cart on checkout
                           context.read<CartBloc>().add(ClearCartEvent());
-
-                          // ScaffoldMessenger.of(context).showSnackBar(
-                          //   const SnackBar(
-                          //     content: Text("Checkout successful!"),
-                          //   ),
-                          // );
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => OrderSuccessPage(),
-                            ),
-                          );
                         },
-                        child: const Text('Checkout'),
+                        child: const Text('Clear All'),
                       ),
+
+                      // Checkout button
+                      Material(
+                        borderRadius: BorderRadius.circular(22),
+                        color: Colors.transparent,
+                        child: Ink(
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(22),
+                            splashColor: Colors.white.withOpacity(0.3),
+                            onTap: () {
+                              // Clear cart on checkout
+                              context.read<CartBloc>().add(ClearCartEvent());
+
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => OrderSuccessPage(),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              height: 40,
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Check Out",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Display total price
                       Text(
                         "Total: \$${totalPrice.toStringAsFixed(2)}",
                         style: const TextStyle(
@@ -119,7 +168,7 @@ class CartPage extends StatelessWidget {
               ],
             );
           } else {
-            return const Center(child: Text("Loading cart..."));
+            return const Center(child: Text("Loading....."));
           }
         },
       ),
